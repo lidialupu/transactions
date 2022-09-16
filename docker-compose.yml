@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  mydatabase:
+    image: "mysql:5.7"
+    environment:
+      - MYSQL_ROOT_PASSWORD=my-secret-pw
+      - MYSQL_DATABASE=transactions
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - my-data-volume:/var/lib/mysql
+  springboot-container:
+    image: history
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    environment:
+      - DATABASE_HOST=mydatabase
+      - DATABASE_USER=springuser
+      - DATABASE_PASSWORD=1234
+      - DATABASE_NAME=transactions
+      - DATABASE_PORT=3306
+    depends_on:
+      - "mydatabase"
+    volumes:
+      - my-data-volume:/var/lib/mysql
+
+volumes:
+  my-data-volume:
