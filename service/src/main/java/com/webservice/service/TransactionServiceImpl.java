@@ -22,6 +22,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private final TransactionRepository repository;
     private final TransactionModelAssembler assembler;
+    private int counter;
 
     public TransactionServiceImpl(TransactionRepository repository, TransactionModelAssembler assembler) {
         this.repository = repository;
@@ -30,10 +31,15 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public EntityModel<Transaction> createTransaction(Transaction transaction) {
+        if(counter < 1) {
+            this.updateData();
+        }
+
         if(checkingJson(transaction)) {
             throw new BadRequestException("Bad Request");
         }
 
+        counter++;
         List<Transaction> transactions = repository.findAll();
         for(Transaction t: transactions) {
             if (t.equals(transaction)) {
@@ -50,10 +56,14 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public EntityModel<Transaction> updateTransaction(Long id, Transaction transactionDetails) {
+        if(counter < 1) {
+            this.updateData();
+        }
         if(checkingJson(transactionDetails)) {
             throw new BadRequestException("Bad Request");
         }
 
+        counter++;
         TransactionsHistory.addCustomer(transactionDetails.getCustomerName());
         TransactionsHistory.updateAmount(repository.getReferenceById(id), transactionDetails);
 
@@ -74,6 +84,13 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void deleteTransaction(Long id) {
+        if(repository.getReferenceById(id).equals(null)) {
+            throw new ResourceNotFoundException(id);
+        }
+        if(counter < 1) {
+            this.updateData();
+        }
+        counter++;
         TransactionsHistory.decreaseTransactions();
         TransactionsHistory.decreaseAmount(repository.getReferenceById(id));
 
@@ -82,6 +99,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<EntityModel<Transaction>> getTransactions() {
+        if(counter < 1) {
+            this.updateData();
+        }
+        counter++;
         return  repository.findAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
@@ -89,6 +110,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public EntityModel<Transaction> getTransactionById(Long id) {
+        if(counter < 1) {
+            this.updateData();
+        }
+        counter++;
         Transaction transaction = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
         return assembler.toModel(transaction);
@@ -96,11 +121,19 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public String getNumber() {
+        if(counter < 1) {
+            this.updateData();
+        }
+        counter++;
         return "Total transactions: " + TransactionsHistory.getTotalTransactions();
     }
 
     @Override
     public List<String> getTotal() {
+        if(counter < 1) {
+            this.updateData();
+        }
+        counter++;
         String totalDeposits = "Total deposits: " + TransactionsHistory.getDepositAmount() + " ";
         String totalWithdrawals = "Total withdrawals: " + TransactionsHistory.getWithdrawalAmount();
 
@@ -113,11 +146,19 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<String> getCustomers() {
+        if(counter < 1) {
+            this.updateData();
+        }
+        counter++;
         return TransactionsHistory.getCustomers();
     }
 
     @Override
     public String getCustomerById(Long id) {
+        if(counter < 1) {
+            this.updateData();
+        }
+        counter++;
 
         Transaction transaction = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
@@ -131,5 +172,40 @@ public class TransactionServiceImpl implements TransactionService {
                 (!(transaction.getTransactionType().equals("deposit")) &&
                         !(transaction.getTransactionType().equals("withdrawal")))
                 || transaction.getSum() == 0;
+    }
+
+    private void updateData(){
+        TransactionsHistory.setTotalTransactions((int)repository.count());
+        TransactionsHistory.setCustomers(findCustomers());
+        TransactionsHistory.setDepositAmount(findDeposits());
+        TransactionsHistory.setWithdrawalAmount(findWithdrawals());
+    }
+
+    private List<String> findCustomers() {
+        List <String> customers = new ArrayList<>();
+        for(Transaction t : repository.findAll()) {
+            customers.add(t.getCustomerName());
+        }
+        return customers;
+    }
+
+    private double findDeposits() {
+        double deposits = 0;
+        for(Transaction t: repository.findAll()) {
+            if(t.getTransactionType().equals("deposit")) {
+                deposits += t.getSum();
+            }
+        }
+        return deposits;
+    }
+
+    private double findWithdrawals() {
+        double withdrawals = 0;
+        for(Transaction t: repository.findAll()) {
+            if(t.getTransactionType().equals("withdrawal")) {
+                withdrawals += t.getSum();
+            }
+        }
+        return withdrawals;
     }
 }

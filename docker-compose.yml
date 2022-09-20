@@ -11,7 +11,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./database/db:/var/lib/mysql
+      - my-data-volume:/var/lib/mysql
   springboot-container:
     image: history
     build:
@@ -29,7 +29,8 @@ services:
     depends_on:
       - "mydatabase"
     volumes:
-      - ./database/db:/var/lib/mysql
+      - my-volume:/var/lib/docker/volumes
 
 volumes:
   my-data-volume:
+  my-volume:
