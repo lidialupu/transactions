@@ -1,4 +1,4 @@
-package com.webservice.payload;
+package com.webservice.payload.response;
 
 import java.util.List;
 

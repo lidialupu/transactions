@@ -1,4 +1,4 @@
-package com.webservice.payload;
+package com.webservice.payload.request;
 
 import lombok.Getter;
 import lombok.Setter;

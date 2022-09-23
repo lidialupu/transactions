@@ -3,10 +3,10 @@ package com.webservice.controller;
 import com.webservice.entity.ERole;
 import com.webservice.entity.Role;
 import com.webservice.entity.User;
-import com.webservice.payload.JwtResponse;
-import com.webservice.payload.LoginRequest;
-import com.webservice.payload.MessageResponse;
-import com.webservice.payload.SignupRequest;
+import com.webservice.payload.response.JwtResponse;
+import com.webservice.payload.request.LoginRequest;
+import com.webservice.payload.response.MessageResponse;
+import com.webservice.payload.request.SignupRequest;
 import com.webservice.repository.RoleRepository;
 import com.webservice.repository.UserRepository;
 import com.webservice.service.JwtUtils;
@@ -85,7 +85,6 @@ public class AuthController {
         } catch (NullPointerException e) {
             System.out.println("First user registered...");
         }
-
 
         // Create new user's account
         User user = new User(signUpRequest.getUsername(),

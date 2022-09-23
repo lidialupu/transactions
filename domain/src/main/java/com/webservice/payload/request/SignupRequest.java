@@ -1,4 +1,4 @@
-package com.webservice.payload;
+package com.webservice.payload.request;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
