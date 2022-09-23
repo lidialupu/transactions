@@ -44,7 +44,6 @@ public class Transaction {
 
             return true;
         }
-
         return false;
     }
 

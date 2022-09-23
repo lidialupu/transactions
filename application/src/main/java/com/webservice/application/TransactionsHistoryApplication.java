@@ -1,6 +1,6 @@
 package com.webservice.application;
 
-import com.webservice.repository.JWTAuthorizationFilter;
+import com.webservice.service.JwtUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -23,17 +23,4 @@ public class TransactionsHistoryApplication {
 		SpringApplication.run(TransactionsHistoryApplication.class, args);
 	}
 
-	@EnableWebSecurity
-	@Configuration
-	class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.csrf().disable()
-					.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-					.authorizeRequests()
-					.antMatchers(HttpMethod.POST, "/user").permitAll()
-					.anyRequest().authenticated();
-		}
-	}
 }
