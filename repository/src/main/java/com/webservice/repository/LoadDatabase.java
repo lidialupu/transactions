@@ -1,5 +1,7 @@
 package com.webservice.repository;
 
+import com.webservice.entity.ERole;
+import com.webservice.entity.Role;
 import com.webservice.entity.Transaction;
 import com.webservice.history.TransactionsHistory;
 import org.slf4j.Logger;
@@ -15,7 +17,7 @@ class LoadDatabase {
 
 
     @Bean
-    CommandLineRunner initDatabase(TransactionRepository transactionRepository) {
+    CommandLineRunner initDatabase(TransactionRepository transactionRepository, RoleRepository roleRepository) {
 
         return args -> {
             Transaction transaction1 = new Transaction(1L, 4000, "Marry Poppins", "deposit");
@@ -34,7 +36,21 @@ class LoadDatabase {
             transactionRepository.save(transaction1);
             transactionRepository.save(transaction2);
 
+            ERole name1 = ERole.ROLE_USER;
+            Role role1 = new Role(1, name1);
+
+            ERole name2 = ERole.ROLE_MODERATOR;
+            Role role2 = new Role(2, name2);
+
+            ERole name3 = ERole.ROLE_ADMIN;
+            Role role3 = new Role(3, name3);
+
+            roleRepository.save(role1);
+            roleRepository.save(role2);
+            roleRepository.save(role3);
+
             transactionRepository.findAll().forEach(transaction -> log.info("Preloaded" + transaction));
+            roleRepository.findAll().forEach(role -> log.info("Role established " + role));
 
         };
     }

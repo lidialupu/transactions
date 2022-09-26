@@ -1,7 +1,12 @@
 package com.webservice.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "roles")
 public class Role {
@@ -13,13 +18,6 @@ public class Role {
     @Column(length = 20)
     private ERole name;
 
-    public Role() {
-
-    }
-
-    public Role(ERole name) {
-        this.name = name;
-    }
 
     public Integer getId() {
         return id;
