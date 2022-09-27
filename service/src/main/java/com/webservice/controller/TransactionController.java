@@ -20,7 +20,7 @@ public class TransactionController  {
     @Autowired
     private TransactionService service;
 
-    @GetMapping("/transactions")
+    @GetMapping("/transactions/all")
     public CollectionModel<EntityModel<Transaction>> getallTransactions() {
 
         List<EntityModel<Transaction>> transactions = service.getTransactions();
@@ -82,7 +82,7 @@ public class TransactionController  {
 
 
     // update transaction
-    @PutMapping("transactions/{id}")
+    @PutMapping("transactions/update{id}")
     public ResponseEntity<?> updateTransaction(@PathVariable(value = "id") long id,
                                                @RequestBody Transaction transactionDetails) {
 
@@ -95,7 +95,7 @@ public class TransactionController  {
     }
 
     // delete transaction by id
-    @DeleteMapping("/transactions/{id}")
+    @DeleteMapping("/transactions/delete{id}")
     public ResponseEntity<?> deleteTransaction(@PathVariable(value = "id") long id) {
 
         service.deleteTransaction(id);
