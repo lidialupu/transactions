@@ -8,18 +8,20 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 
+import java.io.Serializable;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 @Component
-public class TransactionModelAssembler implements RepresentationModelAssembler<Transaction, EntityModel<Transaction>> {
+public class TransactionModelAssembler implements RepresentationModelAssembler<Transaction, EntityModel<Transaction>>, Serializable {
 
     @Override
     public EntityModel<Transaction> toModel(Transaction transaction) {
         return EntityModel.of(transaction,
                 WebMvcLinkBuilder.linkTo(methodOn(TransactionController.class).getTransactionById(transaction.getId())).withSelfRel(),
-                WebMvcLinkBuilder.linkTo(methodOn(TransactionController.class).getallTransactions()).withRel("Transactions"));
+                WebMvcLinkBuilder.linkTo(methodOn(TransactionController.class).getTransactions()).withRel("Transactions"));
     }
 
 

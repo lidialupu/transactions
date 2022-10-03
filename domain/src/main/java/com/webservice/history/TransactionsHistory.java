@@ -3,10 +3,11 @@ package com.webservice.history;
 
 import com.webservice.entity.Transaction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransactionsHistory {
+public class TransactionsHistory implements Serializable {
 
     private static int totalTransactions;
     private static double depositAmount;

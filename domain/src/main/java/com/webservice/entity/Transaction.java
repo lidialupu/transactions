@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.redis.core.RedisHash;
 
 import javax.persistence.*;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Table(name="transactions_history")
@@ -15,8 +18,11 @@ import java.util.Objects;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Transaction {
+@RedisHash("Transaction")
 
+public class Transaction implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private @Id @GeneratedValue long id;
 
     @Column(name = "sum_value")
@@ -50,5 +56,11 @@ public class Transaction {
     @Override
     public int hashCode() {
         return Objects.hash(sum, customerName, transactionType);
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction with id[" + this.id + "]:\nCustomer Name: "
+                + this.customerName + "\nSum: " + this.sum + "\nTransaction Type: " + this.transactionType;
     }
 }

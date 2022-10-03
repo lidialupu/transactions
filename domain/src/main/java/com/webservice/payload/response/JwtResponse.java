@@ -3,11 +3,12 @@ package com.webservice.payload.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
-public class JwtResponse {
+public class JwtResponse implements Serializable {
     private String token;
     private static final String type = "Bearer";
     private Long id;

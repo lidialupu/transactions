@@ -30,7 +30,15 @@ services:
       - "mydatabase"
     volumes:
       - my-volume:/var/lib/docker/volumes
+  redis-server:
+    container_name: redis-cache
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-volume:/var/lib/docker/volumes
 
 volumes:
   my-data-volume:
   my-volume:
+  redis-volume:

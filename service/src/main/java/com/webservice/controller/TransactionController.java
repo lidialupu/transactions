@@ -21,12 +21,16 @@ public class TransactionController  {
     private TransactionService service;
 
     @GetMapping("/transactions/all")
-    public CollectionModel<EntityModel<Transaction>> getallTransactions() {
+//    public CollectionModel<EntityModel<Transaction>> getallTransactions() {
+            public List<Transaction> getTransactions() {
 
-        List<EntityModel<Transaction>> transactions = service.getTransactions();
+//        List<EntityModel<Transaction>> transactions = service.getTransactions();
+//
+//        return CollectionModel.of(transactions, linkTo(methodOn(TransactionController.class)
+//                .getallTransactions()).withSelfRel());
+        List<Transaction> transactions = service.getTransactions();
+        return transactions;
 
-        return CollectionModel.of(transactions, linkTo(methodOn(TransactionController.class)
-                .getallTransactions()).withSelfRel());
     }
 
     @GetMapping(value = "/transactions/number")
@@ -56,18 +60,24 @@ public class TransactionController  {
 
     //create transaction
     @PostMapping("/transactions")
-    public ResponseEntity<?> createTransaction(@Validated @RequestBody Transaction transaction) {
+    public Transaction createTransaction(@Validated @RequestBody Transaction transaction) {
 
-        EntityModel<Transaction> transactionEntityModel = service.createTransaction(transaction);
-
-        return ResponseEntity
-                .created(transactionEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(transactionEntityModel);
+//        EntityModel<Transaction> transactionEntityModel = service.createTransaction(transaction);
+//
+//        return ResponseEntity
+//                .created(transactionEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+//                .body(transactionEntityModel);
+        service.createTransaction(transaction);
+        return transaction;
     }
 
     //get transaction by id
     @GetMapping("transactions/{id}")
-    public EntityModel<Transaction> getTransactionById(@PathVariable(value = "id") long id) {
+//    public EntityModel<Transaction> getTransactionById(@PathVariable(value = "id") long id) {
+//
+//        return service.getTransactionById(id);
+//    }
+    public Transaction getTransactionById(@PathVariable(value = "id") long id) {
 
         return service.getTransactionById(id);
     }
@@ -83,16 +93,21 @@ public class TransactionController  {
 
     // update transaction
     @PutMapping("transactions/update{id}")
-    public ResponseEntity<?> updateTransaction(@PathVariable(value = "id") long id,
-                                               @RequestBody Transaction transactionDetails) {
-
-        EntityModel<Transaction> transactionEntityModel = service.updateTransaction(id, transactionDetails);
-
-        return ResponseEntity
-                .created(transactionEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(transactionEntityModel);
-
+//    public ResponseEntity<?> updateTransaction(@PathVariable(value = "id") long id,
+//                                               @RequestBody Transaction transactionDetails) {
+//
+//        EntityModel<Transaction> transactionEntityModel = service.updateTransaction(id, transactionDetails);
+//
+//        return ResponseEntity
+//                .created(transactionEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+//                .body(transactionEntityModel);
+//
+//    }
+    public Transaction updateTransaction(@PathVariable(value = "id") long id,
+                                            @RequestBody Transaction transactionDetails) {
+        return service.updateTransaction(id, transactionDetails);
     }
+
 
     // delete transaction by id
     @DeleteMapping("/transactions/delete{id}")

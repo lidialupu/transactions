@@ -1,8 +1,8 @@
 package com.webservice.application;
 
-import com.webservice.controller.AuthEntryPointJwt;
-import com.webservice.controller.AuthTokenFilter;
-import com.webservice.service.UserDetailsServiceImpl;
+import com.webservice.auth.AuthEntryPointJwt;
+import com.webservice.auth.AuthTokenFilter;
+import com.webservice.jwt.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

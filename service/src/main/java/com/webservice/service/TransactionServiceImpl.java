@@ -8,17 +8,26 @@ import com.webservice.repository.TransactionRepository;
 import com.webservice.entity.Transaction;
 import com.webservice.history.TransactionsHistory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Service
-public class TransactionServiceImpl implements TransactionService {
-
+@Cacheable("transactions")
+@EnableCaching
+public class TransactionServiceImpl implements TransactionService, Serializable {
+    @Serial
+    private static final long serialVersionUID = 2L;
     @Autowired
     private final TransactionRepository repository;
     private final TransactionModelAssembler assembler;
@@ -30,7 +39,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public EntityModel<Transaction> createTransaction(Transaction transaction) {
+    @CachePut(value="transactions")
+    public Transaction createTransaction(Transaction transaction) {
         if(counter < 1) {
             this.updateData();
         }
@@ -51,11 +61,15 @@ public class TransactionServiceImpl implements TransactionService {
         TransactionsHistory.increaseAmount(transaction);
         TransactionsHistory.addCustomer(transaction.getCustomerName());
 
-        return assembler.toModel(repository.save(transaction));
+       // return assembler.toModel(repository.save(transaction));
+        repository.save(transaction);
+        return transaction;
     }
 
     @Override
-    public EntityModel<Transaction> updateTransaction(Long id, Transaction transactionDetails) {
+    @CachePut("transactions")
+   // public EntityModel<Transaction> updateTransaction(Long id, Transaction transactionDetails) {
+    public Transaction updateTransaction(Long id, Transaction transactionDetails) {
         if(counter < 1) {
             this.updateData();
         }
@@ -79,10 +93,12 @@ public class TransactionServiceImpl implements TransactionService {
                     return repository.save(transactionDetails);
                 });
 
-        return assembler.toModel(updatedTransaction);
+        //return assembler.toModel(updatedTransaction);
+        return updatedTransaction;
     }
 
     @Override
+    @CacheEvict(value = "transactions", key = "#id")
     public void deleteTransaction(Long id) {
         if(repository.getReferenceById(id).equals(null)) {
             throw new ResourceNotFoundException(id);
@@ -98,25 +114,41 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<EntityModel<Transaction>> getTransactions() {
+//    @Cacheable("transactions")
+    @CachePut("transactions")
+    //public List<EntityModel<Transaction>> getTransactions() {
+    public List<Transaction> getTransactions() {
         if(counter < 1) {
             this.updateData();
         }
         counter++;
-        return  repository.findAll().stream()
-                .map(assembler::toModel)
-                .collect(Collectors.toList());
+//        return  repository.findAll().stream()
+//                .map(assembler::toModel)
+//                .collect(Collectors.toList());
+        List<Transaction> transactions = repository.findAll();
+        return transactions;
+
     }
 
-    @Override
-    public EntityModel<Transaction> getTransactionById(Long id) {
+//    public EntityModel<Transaction> getTransactionById(Long id) {
+//        if(counter < 1) {
+//            this.updateData();
+//        }
+//        counter++;
+//        Transaction transaction = repository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException(id));
+//        return assembler.toModel(transaction);
+//    }
+@Override
+@Cacheable("transactions")
+    public Transaction getTransactionById(Long id) {
         if(counter < 1) {
             this.updateData();
         }
         counter++;
         Transaction transaction = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
-        return assembler.toModel(transaction);
+        return transaction;
     }
 
     @Override
