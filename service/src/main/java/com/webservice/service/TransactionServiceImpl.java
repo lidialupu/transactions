@@ -39,7 +39,7 @@ public class TransactionServiceImpl implements TransactionService, Serializable 
     }
 
     @Override
-    @CachePut(value="transactions")
+    @CachePut(value="transactions", key = "#transaction.getId")
     public Transaction createTransaction(Transaction transaction) {
         if(counter < 1) {
             this.updateData();
@@ -67,7 +67,7 @@ public class TransactionServiceImpl implements TransactionService, Serializable 
     }
 
     @Override
-    @CachePut("transactions")
+    @CachePut(value = "transactions", key = "#id")
    // public EntityModel<Transaction> updateTransaction(Long id, Transaction transactionDetails) {
     public Transaction updateTransaction(Long id, Transaction transactionDetails) {
         if(counter < 1) {
@@ -114,17 +114,12 @@ public class TransactionServiceImpl implements TransactionService, Serializable 
     }
 
     @Override
-//    @Cacheable("transactions")
     @CachePut("transactions")
-    //public List<EntityModel<Transaction>> getTransactions() {
     public List<Transaction> getTransactions() {
         if(counter < 1) {
             this.updateData();
         }
         counter++;
-//        return  repository.findAll().stream()
-//                .map(assembler::toModel)
-//                .collect(Collectors.toList());
         List<Transaction> transactions = repository.findAll();
         return transactions;
 
@@ -139,8 +134,9 @@ public class TransactionServiceImpl implements TransactionService, Serializable 
 //                .orElseThrow(() -> new ResourceNotFoundException(id));
 //        return assembler.toModel(transaction);
 //    }
-@Override
-@Cacheable("transactions")
+
+    @Override
+    @Cacheable("transactions")
     public Transaction getTransactionById(Long id) {
         if(counter < 1) {
             this.updateData();

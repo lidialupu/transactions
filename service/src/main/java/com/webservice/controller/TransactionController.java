@@ -22,14 +22,14 @@ public class TransactionController  {
 
     @GetMapping("/transactions/all")
 //    public CollectionModel<EntityModel<Transaction>> getallTransactions() {
-            public List<Transaction> getTransactions() {
+    public ResponseEntity getTransactions() {
 
 //        List<EntityModel<Transaction>> transactions = service.getTransactions();
 //
 //        return CollectionModel.of(transactions, linkTo(methodOn(TransactionController.class)
 //                .getallTransactions()).withSelfRel());
         List<Transaction> transactions = service.getTransactions();
-        return transactions;
+        return ResponseEntity.ok().body(transactions);
 
     }
 
